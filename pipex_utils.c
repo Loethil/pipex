@@ -13,6 +13,7 @@
 
 char	**add_slash(char **all_path)
 {
+	char	*tmp;
 	int	i;
 	int	j;
 
@@ -20,44 +21,68 @@ char	**add_slash(char **all_path)
 	while (all_path[i])
 	{
 		j = ft_strlen(all_path[i]);
+		tmp = all_path[i];
+		all_path[i] = malloc(sizeof(char) * (j + 2));
+		ft_strlcpy(all_path[i], tmp, j);
 		all_path[i][j++] = '/';
 		all_path[i][j] = '\0';
+		free (tmp);
 		i++;
 	}
 	return (all_path);
 }
 
-char	**find_path(char **env, char **all_path)
+char	**find_path(t_data *pip, char **env)
 {
 	int	i;
 
-	if (!all_path)
+	if (!pip->all_path)
 		return (NULL);
 	i = 0;
 	while (env[i])
 	{
-		if (strncmp(env[i], "PATH", 4) == 0)
-			break;
+		if (ft_strncmp(env[i], "PATH", 4) == 0)
+			break ;
 		i++;
 	}
-	all_path = ft_split(env[i] + 5, ':');
-	all_path = add_slash(all_path);
-	return (all_path);
+	pip->all_path = ft_split(env[i] + 5, ':');
+	pip->all_path = add_slash(pip->all_path);
+	return (pip->all_path);
 }
 
-char	*get_access(char *tab, char **all_path, char *argv)
+char	*get_access(t_data *pip, char *argv)
 {
 	int	i;
 
 	i = 0;
-	while(all_path[i])
+	while (pip->all_path[i])
 	{
-		tab = ft_strjoin(all_path[i], argv);
-		if (access(tab, X_OK) == 0)
+		pip->true_path = ft_strjoin(pip->all_path[i], argv);
+		if (access(pip->true_path, X_OK) == 0)
 			break ;
-		else if (access(tab, X_OK) == -1)
-			tab = NULL;
+		else if (access(pip->true_path, X_OK) == -1)
+			pip->true_path = NULL;
 		i++;
 	}
+	return (pip->true_path);
+}
+
+char	**ft_split2(char const *s, char c, char *argv)
+{
+	char	**tab;
+	int		v;
+	int		e;
+
+	v = 0;
+	e = 0;
+	if (!s)
+		return (NULL);
+	tab = malloc ((countword(s, c) + 1) * sizeof (char *));
+	if (!tab)
+		return (NULL);
+	while (e < countword(s, c) - 1)
+		tab[e++] = theword(&v, s, c);
+	tab[e++] = argv;
+	tab[e] = NULL;
 	return (tab);
 }

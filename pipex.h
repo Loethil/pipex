@@ -23,11 +23,20 @@
 
 typedef	struct s_data
 {
-	/* data */
+	char	**all_path;
+	char	**argv1;
+	char	**argv2;
+	char	*true_path;
+	pid_t	pid;
+	int	fdin;
+	int	fdout;
 }		t_data;
 
 char	**add_slash(char **all_path);
-char	**find_path(char **env, char **all_path);
-char	*get_access(char *tab, char **all_path, char *argv);
+char	**find_path(t_data *pip, char **env);
+char	**ft_split2(char const *s, char c, char *argv);
+char	*theword(int *i, const char *s, char c);
+int	countword(char const *s, char c);
+char	*get_access(t_data *pip, char *argv);
 
 #endif
