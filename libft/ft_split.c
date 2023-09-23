@@ -32,7 +32,7 @@ int	countword(char const *s, char c)
 	return (a + 1);
 }
 
-char	*theword(int *i, const char *s, char c)
+char	*theword(int *v, const char *s, char c)
 {
 	int		n;
 	int		o;
@@ -40,15 +40,15 @@ char	*theword(int *i, const char *s, char c)
 
 	n = 0;
 	o = 0;
-	while (s[*i] == c)
-		(*i)++;
-	while (s[*i + n] && s[*i + n] != c)
+	while (s[*v] == c)
+		(*v)++;
+	while (s[*v + n] && s[*v + n] != c)
 		n++;
-	tub = malloc ((n + 1) * sizeof(char));
+	tub = malloc((n + 1) * sizeof(char));
 	if (!tub)
 		return (NULL);
 	while (o < n)
-		tub[o++] = s[(*i)++];
+		tub[o++] = s[(*v)++];
 	tub[o] = '\0';
 	return (tub);
 }
@@ -63,7 +63,7 @@ char	**ft_split(char const *s, char c)
 	e = 0;
 	if (!s)
 		return (NULL);
-	tab = malloc (countword(s, c) * sizeof (char *));
+	tab = malloc(countword(s, c) * sizeof(char *));
 	if (!tab)
 		return (NULL);
 	while (e < countword(s, c) - 1)

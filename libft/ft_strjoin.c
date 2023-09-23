@@ -17,15 +17,20 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	int		r;
 	int		a;
 
-	tab = (char *)malloc ((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof (char));
+	tab = malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+	// printf("s1 = %ld\n", ft_strlen(s1));
+	// printf("s2 = %ld\n", ft_strlen(s2));
 	if (!tab)
 		return (NULL);
-	r = -1;
-	a = -1;
-	while (s1[++r])
+	r = 0;
+	a = 0;
+	while (s1 && s1[r])
+	{
 		tab[r] = s1[r];
-	while (s2[++a])
-		tab[r++] = s2[a];
+		r++;
+	}
+	while (s2 && s2[a])
+		tab[r++] = s2[a++];
 	tab[r] = '\0';
 	return (tab);
 }

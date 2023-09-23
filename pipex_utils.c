@@ -13,20 +13,12 @@
 
 char	**add_slash(char **all_path)
 {
-	char	*tmp;
 	int	i;
-	int	j;
 
 	i = 0;
 	while (all_path[i])
 	{
-		j = ft_strlen(all_path[i]);
-		tmp = all_path[i];
-		all_path[i] = malloc(sizeof(char) * (j + 2));
-		ft_strlcpy(all_path[i], tmp, j);
-		all_path[i][j++] = '/';
-		all_path[i][j] = '\0';
-		free (tmp);
+		all_path[i] = ft_strjoin(all_path[i], "/");
 		i++;
 	}
 	return (all_path);
@@ -36,8 +28,6 @@ char	**find_path(t_data *pip, char **env)
 {
 	int	i;
 
-	if (!pip->all_path)
-		return (NULL);
 	i = 0;
 	while (env[i])
 	{
@@ -65,24 +55,4 @@ char	*get_access(t_data *pip, char *argv)
 		i++;
 	}
 	return (pip->true_path);
-}
-
-char	**ft_split2(char const *s, char c, char *argv)
-{
-	char	**tab;
-	int		v;
-	int		e;
-
-	v = 0;
-	e = 0;
-	if (!s)
-		return (NULL);
-	tab = malloc ((countword(s, c) + 1) * sizeof (char *));
-	if (!tab)
-		return (NULL);
-	while (e < countword(s, c) - 1)
-		tab[e++] = theword(&v, s, c);
-	tab[e++] = argv;
-	tab[e] = NULL;
-	return (tab);
 }
