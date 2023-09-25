@@ -56,3 +56,17 @@ char	*get_access(t_data *pip, char *argv)
 	}
 	return (pip->true_path);
 }
+
+void	free_argv(t_data *pip)
+{
+	int	i;
+
+	i = 0;
+	while (pip->argv1[i])
+		free(pip->argv1[i++]);
+	i = 0;
+	free(pip->argv1);
+	while (pip->argv2[i])
+		free(pip->argv2[i++]);
+	free(pip->argv2);
+}

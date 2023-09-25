@@ -18,7 +18,5 @@ size_t	ft_strlen(const char *str)
 	i = 0;
 	while (str && str[i])
 		i++;
-	// printf("%s\n", str);
-	// printf("%d\n\n\n", i);
 	return (i);
 }

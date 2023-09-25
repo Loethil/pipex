@@ -13,7 +13,7 @@
 NAME = pipex
 
 CCC = pipex.c\
-	pipex_utils.c
+	pipex_utils.c\
 
 OOO = $(CCC:.c=.o)
 
