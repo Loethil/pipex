@@ -19,10 +19,9 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <errno.h>
-# include "libft/libft.h"
+# include "libft.h"
 
-
-typedef	struct s_data
+typedef struct s_data
 {
 	char	**all_path;
 	char	**argv1;
@@ -30,16 +29,19 @@ typedef	struct s_data
 	char	*true_path;
 	pid_t	pid;
 	pid_t	payd2;
-	int	fdin;
-	int	fdout;
+	int		fdin;
+	int		fdout;
 }		t_data;
 
-char	**add_slash(char **all_path);
 char	**find_path(t_data *pip, char **env);
-char	**ft_split2(char const *s, char c, char *argv);
 char	*theword(int *i, const char *s, char c);
-int	countword(char const *s, char c);
-char	*get_access(t_data *pip, char *argv);
+int		countword(char const *s, char c);
+void	oppenheimer(t_data *pip);
+void	get_access(t_data *pip, char *argv);
+void	error(int c, t_data *pip);
+void	herewego(t_data *pip, char **env, int *pipe_fd);
+void	proc_1(t_data *pip, char **env, int *pipe_fd);
+void	proc_2(t_data *pip, char **env, int *pipe_fd);
 void	free_argv(t_data *pip);
 
 #endif

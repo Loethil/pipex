@@ -38,11 +38,3 @@ int	ft_atoi(const char *str)
 	else
 		return (res);
 }
-
-int	main(void)
-{
-	char	*tab = "58456";
-	
-	printf("%d\n", ft_atoi(tab));
-	return (0);
-}

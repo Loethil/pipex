@@ -11,17 +11,21 @@
 /* ************************************************************************** */
 #include "pipex.h"
 
-char	**add_slash(char **all_path)
+void	error(int c, t_data *pip)
 {
 	int	i;
 
-	i = 0;
-	while (all_path[i])
+	free_argv(pip);
+	if (c == 1)
+		write (1, "error\n", 6);
+	if (c == 0)
 	{
-		all_path[i] = ft_strjoin(all_path[i], "/");
-		i++;
+		i = 0;
+		while (pip->all_path[i])
+			free(pip->all_path[i++]);
 	}
-	return (all_path);
+	free(pip->all_path);
+	exit(0);
 }
 
 char	**find_path(t_data *pip, char **env)
@@ -36,11 +40,16 @@ char	**find_path(t_data *pip, char **env)
 		i++;
 	}
 	pip->all_path = ft_split(env[i] + 5, ':');
-	pip->all_path = add_slash(pip->all_path);
+	i = 0;
+	while (pip->all_path[i])
+	{
+		pip->all_path[i] = ft_strjoin(pip->all_path[i], "/");
+		i++;
+	}
 	return (pip->all_path);
 }
 
-char	*get_access(t_data *pip, char *argv)
+void	get_access(t_data *pip, char *argv)
 {
 	int	i;
 
@@ -49,12 +58,11 @@ char	*get_access(t_data *pip, char *argv)
 	{
 		pip->true_path = ft_strjoin(pip->all_path[i], argv);
 		if (access(pip->true_path, X_OK) == 0)
-			break ;
-		else if (access(pip->true_path, X_OK) == -1)
-			pip->true_path = NULL;
+			return ;
+		free(pip->true_path);
 		i++;
 	}
-	return (pip->true_path);
+	error(1, pip);
 }
 
 void	free_argv(t_data *pip)
