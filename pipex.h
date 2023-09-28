@@ -12,7 +12,7 @@
 
 #ifndef PIPEX_H
 # define PIPEX_H
-
+# define RDM "/dev/urandom"
 # include <stdio.h>
 # include <unistd.h>
 # include <fcntl.h>
@@ -34,10 +34,10 @@ typedef struct s_data
 }		t_data;
 
 char	**find_path(t_data *pip, char **env);
+char	*get_access(t_data *pip, char *argv);
 char	*theword(int *i, const char *s, char c);
 int		countword(char const *s, char c);
 void	oppenheimer(t_data *pip);
-void	get_access(t_data *pip, char *argv);
 void	error(int c, t_data *pip);
 void	herewego(t_data *pip, char **env, int *pipe_fd);
 void	proc_1(t_data *pip, char **env, int *pipe_fd);

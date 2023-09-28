@@ -28,14 +28,30 @@ void	error(int c, t_data *pip)
 	exit(0);
 }
 
+void	free_argv(t_data *pip)
+{
+	int	i;
+
+	i = 0;
+	while (pip->argv1[i])
+		free(pip->argv1[i++]);
+	i = 0;
+	free(pip->argv1);
+	while (pip->argv2[i])
+		free(pip->argv2[i++]);
+	free(pip->argv2);
+}
+
 char	**find_path(t_data *pip, char **env)
 {
 	int	i;
 
 	i = 0;
+	if (env[i] == NULL)
+		return (NULL);
 	while (env[i])
 	{
-		if (ft_strncmp(env[i], "PATH", 4) == 0)
+		if (ft_strncmp(env[i], "PATH=", 5) == 0)
 			break ;
 		i++;
 	}
@@ -49,32 +65,21 @@ char	**find_path(t_data *pip, char **env)
 	return (pip->all_path);
 }
 
-void	get_access(t_data *pip, char *argv)
+char	*get_access(t_data *pip, char *argv)
 {
 	int	i;
 
 	i = 0;
+	if (access(argv, X_OK) == 0)
+		return (argv);
 	while (pip->all_path[i])
 	{
 		pip->true_path = ft_strjoin(pip->all_path[i], argv);
 		if (access(pip->true_path, X_OK) == 0)
-			return ;
+			return (pip->true_path);
 		free(pip->true_path);
 		i++;
 	}
 	error(1, pip);
-}
-
-void	free_argv(t_data *pip)
-{
-	int	i;
-
-	i = 0;
-	while (pip->argv1[i])
-		free(pip->argv1[i++]);
-	i = 0;
-	free(pip->argv1);
-	while (pip->argv2[i])
-		free(pip->argv2[i++]);
-	free(pip->argv2);
+	return (0);
 }

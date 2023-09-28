@@ -14,7 +14,7 @@
 void	proc_1(t_data *pip, char **env, int *pipe_fd)
 {
 	close(pipe_fd[0]);
-	get_access(pip, pip->argv1[0]);
+	pip->true_path = get_access(pip, pip->argv1[0]);
 	if (dup2(pip->fdin, STDIN_FILENO) == -1)
 		error(1, pip);
 	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
@@ -27,7 +27,7 @@ void	proc_1(t_data *pip, char **env, int *pipe_fd)
 void	proc_2(t_data *pip, char **env, int *pipe_fd)
 {
 	close(pipe_fd[1]);
-	get_access(pip, pip->argv2[0]);
+	pip->true_path = get_access(pip, pip->argv2[0]);
 	if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
 		error(1, pip);
 	if (dup2(pip->fdout, STDOUT_FILENO) == -1)
@@ -39,7 +39,11 @@ void	proc_2(t_data *pip, char **env, int *pipe_fd)
 
 void	herewego(t_data *pip, char **env, int *pipe_fd)
 {
+	int	s;
+
 	pip->true_path = NULL;
+	if (find_path(pip, env) == NULL)
+		return ;
 	pip->all_path = find_path(pip, env);
 	pip->pid = fork();
 	if (pip->pid == -1)
@@ -52,7 +56,7 @@ void	herewego(t_data *pip, char **env, int *pipe_fd)
 	else if (pip->payd2 == 0)
 		proc_2(pip, env, pipe_fd);
 	else
-		wait(NULL);
+		waitpid(pip->pid, &s, 0);
 }
 
 int	main(int argc, char **argv, char **env)
@@ -60,12 +64,16 @@ int	main(int argc, char **argv, char **env)
 	t_data	pip;
 	int		pipe_fd[2];
 
+	(void)env;
+
 	if (argc == 5)
 	{
 		if (pipe(pipe_fd) == -1)
 			error(1, &pip);
+		if (ft_strncmp(argv[1], RDM, ft_strlen(RDM)) == 0)
+			return (0);
 		pip.fdout = open(argv[4], O_CREAT | O_TRUNC | O_WRONLY, 0644);
-		pip.fdin = open(argv[1], O_TRUNC | O_RDONLY);
+		pip.fdin = open(argv[1], O_RDONLY);
 		if (pip.fdin == -1 || pip.fdout == -1)
 		{
 			write(1, "Error file\n", 11);
