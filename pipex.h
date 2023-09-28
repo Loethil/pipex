@@ -33,15 +33,16 @@ typedef struct s_data
 	int		fdout;
 }		t_data;
 
-char	**find_path(t_data *pip, char **env);
-char	*get_access(t_data *pip, char *argv);
+void	find_path(t_data *pip, char **env);
+void	free_tabs(char  **tab);
 char	*theword(int *i, const char *s, char c);
+char	*get_access(t_data *pip, char *argv);
 int		countword(char const *s, char c);
 void	oppenheimer(t_data *pip);
-void	error(int c, t_data *pip);
-void	herewego(t_data *pip, char **env, int *pipe_fd);
-void	proc_1(t_data *pip, char **env, int *pipe_fd);
-void	proc_2(t_data *pip, char **env, int *pipe_fd);
+void	error(char *err, t_data *pip);
+void	herewego(t_data *pip, char **env, char **argv, int *pipe_fd);
+void	proc_1(t_data *pip, char **env, char **argv, int *pipe_fd);
+void	proc_2(t_data *pip, char **env, char **argv, int *pipe_fd);
 void	free_argv(t_data *pip);
 
 #endif

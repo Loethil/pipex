@@ -11,44 +11,33 @@
 /* ************************************************************************** */
 #include "pipex.h"
 
-void	error(int c, t_data *pip)
+void	free_tabs(char  **tab)
 {
 	int	i;
 
-	free_argv(pip);
-	if (c == 1)
-		write (1, "error\n", 6);
-	if (c == 0)
+	i = 0;
+	while (tab[i])
 	{
-		i = 0;
-		while (pip->all_path[i])
-			free(pip->all_path[i++]);
+		free(tab[i]);
+		i++;
 	}
-	free(pip->all_path);
+	free(tab);
+}
+
+void	error(char *err, t_data *pip)
+{
+	write(1, err, ft_strlen(err));
+	free_tabs(pip->argv1);
+	free_tabs(pip->argv2);
+	free_tabs(pip->all_path);
 	exit(0);
 }
 
-void	free_argv(t_data *pip)
+void	find_path(t_data *pip, char **env)
 {
 	int	i;
 
 	i = 0;
-	while (pip->argv1[i])
-		free(pip->argv1[i++]);
-	i = 0;
-	free(pip->argv1);
-	while (pip->argv2[i])
-		free(pip->argv2[i++]);
-	free(pip->argv2);
-}
-
-char	**find_path(t_data *pip, char **env)
-{
-	int	i;
-
-	i = 0;
-	if (env[i] == NULL)
-		return (NULL);
 	while (env[i])
 	{
 		if (ft_strncmp(env[i], "PATH=", 5) == 0)
@@ -62,7 +51,6 @@ char	**find_path(t_data *pip, char **env)
 		pip->all_path[i] = ft_strjoin(pip->all_path[i], "/");
 		i++;
 	}
-	return (pip->all_path);
 }
 
 char	*get_access(t_data *pip, char *argv)
@@ -80,6 +68,8 @@ char	*get_access(t_data *pip, char *argv)
 		free(pip->true_path);
 		i++;
 	}
-	error(1, pip);
-	return (0);
+	free_tabs(pip->argv1);
+	free_tabs(pip->argv2);
+	free(pip->all_path);
+	exit(0);
 }

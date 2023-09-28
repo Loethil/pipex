@@ -1,3 +1,4 @@
+infile
 libft
 makefile
 outfile
@@ -5,6 +6,5 @@ pipex
 pipex.c
 pipex.h
 pipex.o
-pipextester
 pipex_utils.c
 pipex_utils.o

@@ -11,50 +11,54 @@
 /* ************************************************************************** */
 #include "pipex.h"
 
-void	proc_1(t_data *pip, char **env, int *pipe_fd)
+void	proc_1(t_data *pip, char **env, char **argv, int *pipe_fd)
 {
 	close(pipe_fd[0]);
+	pip->fdin = open(argv[1], O_RDONLY);
+	if (pip->fdin == -1)
+		error("Error file\n", pip);
 	pip->true_path = get_access(pip, pip->argv1[0]);
 	if (dup2(pip->fdin, STDIN_FILENO) == -1)
-		error(1, pip);
+		error("Error dup2\n", pip);
 	if (dup2(pipe_fd[1], STDOUT_FILENO) == -1)
-		error(1, pip);
+		error("Error dup2\n", pip);
 	close(pipe_fd[1]);
 	if (execve(pip->true_path, pip->argv1, env) == -1)
-		error(1, pip);
+		error("Error execve\n", pip);
 }
 
-void	proc_2(t_data *pip, char **env, int *pipe_fd)
+void	proc_2(t_data *pip, char **env, char **argv, int *pipe_fd)
 {
 	close(pipe_fd[1]);
-	pip->true_path = get_access(pip, pip->argv2[0]);
+	pip->fdout = open(argv[4], O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	if (pip->fdout == -1)
+		error("Error file\n", pip);
+	pip->true_path = get_access(pip, pip->argv1[0]);
 	if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
-		error(1, pip);
+		error("Error dup2\n", pip);
 	if (dup2(pip->fdout, STDOUT_FILENO) == -1)
-		error(1, pip);
+		error("Error dup2\n", pip);
 	close(pipe_fd[0]);
 	if (execve(pip->true_path, pip->argv2, env) == -1)
-		error(1, pip);
+		error("Error execve\n", pip);
 }
 
-void	herewego(t_data *pip, char **env, int *pipe_fd)
+void	herewego(t_data *pip, char **env, char **argv, int *pipe_fd)
 {
 	int	s;
 
 	pip->true_path = NULL;
-	if (find_path(pip, env) == NULL)
-		return ;
-	pip->all_path = find_path(pip, env);
+	find_path(pip, env);
 	pip->pid = fork();
 	if (pip->pid == -1)
-		error(1, pip);
+		error("Error pid\n", pip);
 	else if (pip->pid == 0)
-		proc_1(pip, env, pipe_fd);
+		proc_1(pip, env, argv, pipe_fd);
 	pip->payd2 = fork();
 	if (pip->pid == -1)
-		error(1, pip);
+		error("Error pid\n", pip);
 	else if (pip->payd2 == 0)
-		proc_2(pip, env, pipe_fd);
+		proc_2(pip, env, argv, pipe_fd);
 	else
 		waitpid(pip->pid, &s, 0);
 }
@@ -64,25 +68,16 @@ int	main(int argc, char **argv, char **env)
 	t_data	pip;
 	int		pipe_fd[2];
 
-	(void)env;
-
 	if (argc == 5)
 	{
 		if (pipe(pipe_fd) == -1)
-			error(1, &pip);
+			error("Error pipe\n", &pip);
 		if (ft_strncmp(argv[1], RDM, ft_strlen(RDM)) == 0)
 			return (0);
-		pip.fdout = open(argv[4], O_CREAT | O_TRUNC | O_WRONLY, 0644);
-		pip.fdin = open(argv[1], O_RDONLY);
-		if (pip.fdin == -1 || pip.fdout == -1)
-		{
-			write(1, "Error file\n", 11);
-			return (0);
-		}
 		pip.argv1 = ft_split(argv[2], ' ');
 		pip.argv2 = ft_split(argv[3], ' ');
-		herewego(&pip, env, pipe_fd);
-		error(0, &pip);
+		herewego(&pip, env, argv, pipe_fd);
+		error("", &pip);
 	}
 	else
 		write(1, "Error arguments\n", 16);
