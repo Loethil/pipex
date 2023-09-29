@@ -34,7 +34,7 @@ typedef struct s_data
 }		t_data;
 
 void	find_path(t_data *pip, char **env);
-void	free_tabs(char  **tab);
+void	free_tabs(char **tab);
 char	*theword(int *i, const char *s, char c);
 char	*get_access(t_data *pip, char *argv);
 int		countword(char const *s, char c);

@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "pipex.h"
 
-void	free_tabs(char  **tab)
+void	free_tabs(char **tab)
 {
 	int	i;
 
