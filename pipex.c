@@ -13,10 +13,10 @@
 
 void	proc_1(t_data *pip, char **env, char **argv, int *pipe_fd)
 {
-	close(pipe_fd[0]);
 	pip->fdin = open(argv[1], O_RDONLY);
 	if (pip->fdin == -1)
 		error("Error file\n", pip);
+	close(pipe_fd[0]);
 	pip->true_path = get_access(pip, pip->argv1[0]);
 	if (dup2(pip->fdin, STDIN_FILENO) == -1)
 		error("Error dup2\n", pip);
@@ -29,11 +29,11 @@ void	proc_1(t_data *pip, char **env, char **argv, int *pipe_fd)
 
 void	proc_2(t_data *pip, char **env, char **argv, int *pipe_fd)
 {
-	close(pipe_fd[1]);
 	pip->fdout = open(argv[4], O_CREAT | O_TRUNC | O_WRONLY, 0644);
 	if (pip->fdout == -1)
 		error("Error file\n", pip);
-	pip->true_path = get_access(pip, pip->argv1[0]);
+	close(pipe_fd[1]);
+	pip->true_path = get_access(pip, pip->argv2[0]);
 	if (dup2(pipe_fd[0], STDIN_FILENO) == -1)
 		error("Error dup2\n", pip);
 	if (dup2(pip->fdout, STDOUT_FILENO) == -1)
@@ -45,7 +45,7 @@ void	proc_2(t_data *pip, char **env, char **argv, int *pipe_fd)
 
 void	herewego(t_data *pip, char **env, char **argv, int *pipe_fd)
 {
-	int	s;
+	int	status;
 
 	pip->true_path = NULL;
 	find_path(pip, env);
@@ -54,13 +54,15 @@ void	herewego(t_data *pip, char **env, char **argv, int *pipe_fd)
 		error("Error pid\n", pip);
 	else if (pip->pid == 0)
 		proc_1(pip, env, argv, pipe_fd);
-	pip->payd2 = fork();
-	if (pip->pid == -1)
+	else
+		waitpid(pip->pid, &status, 0);
+	pip->pid2 = fork();
+	if (pip->pid2 == -1)
 		error("Error pid\n", pip);
-	else if (pip->payd2 == 0)
+	else if (pip->pid2 == 0)
 		proc_2(pip, env, argv, pipe_fd);
 	else
-		waitpid(pip->pid, &s, 0);
+		waitpid(pip->pid, &status, 0);
 }
 
 int	main(int argc, char **argv, char **env)
@@ -74,6 +76,11 @@ int	main(int argc, char **argv, char **env)
 			error("Error pipe\n", &pip);
 		if (ft_strncmp(argv[1], RDM, ft_strlen(RDM)) == 0)
 			return (0);
+		if ((ft_strlen(argv[2]) && ft_strlen(argv[3])) <= 0)
+		{
+			write(1, "missing arguments\n", 18);
+			return (0);
+		}
 		pip.argv1 = ft_split(argv[2], ' ');
 		pip.argv2 = ft_split(argv[3], ' ');
 		herewego(&pip, env, argv, pipe_fd);

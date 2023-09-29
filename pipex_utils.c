@@ -30,7 +30,7 @@ void	error(char *err, t_data *pip)
 	free_tabs(pip->argv1);
 	free_tabs(pip->argv2);
 	free_tabs(pip->all_path);
-	exit(0);
+	exit(1);
 }
 
 void	find_path(t_data *pip, char **env)
@@ -71,5 +71,6 @@ char	*get_access(t_data *pip, char *argv)
 	free_tabs(pip->argv1);
 	free_tabs(pip->argv2);
 	free(pip->all_path);
-	exit(0);
+	write (1, "command not found\n", 18);
+	exit(1);
 }

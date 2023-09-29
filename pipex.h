@@ -28,7 +28,7 @@ typedef struct s_data
 	char	**argv2;
 	char	*true_path;
 	pid_t	pid;
-	pid_t	payd2;
+	pid_t	pid2;
 	int		fdin;
 	int		fdout;
 }		t_data;
